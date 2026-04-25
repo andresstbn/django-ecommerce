@@ -1,0 +1,12 @@
+__pycache__/
+static/
+.DS_Store
+.env
+.env.*
+!.env.example
+app.yaml
+
+# Service account keys and local secret files
+datakecommerce/datak-production-789b11455f24.json
+*.service-account.json
+*credentials*.json

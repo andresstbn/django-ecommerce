@@ -1,0 +1,28 @@
+runtime: python312
+service: ecommerce
+
+env_variables:
+
+  DJANGO_SECRET_KEY: "<DJANGO_SECRET_KEY_EXAMPLE>"
+  ADDI_WEBHOOK_USERNAME: "<ADDI_WEBHOOK_USERNAME_EXAMPLE>"
+  ADDI_WEBHOOK_PASSWORD: "<ADDI_WEBHOOK_PASSWORD_EXAMPLE>"
+  ADDI_AUTH_API: https://auth.addi.com/oauth/token
+  ADDI_PAYMENT_API: https://api.addi.com/v1/online-applications
+  ENV: "<ENV_EXAMPLE>"
+  DATABASE_URL: "postgres://<DB_USER>:<DB_PASSWORD>@/cloudsql/<PROJECT>:<REGION>:<INSTANCE>/<DB_NAME>"
+  GS_PROJECT_ID: "<GCP_PROJECT_ID_EXAMPLE>"
+  GS_BUCKET_NAME: "<GCS_BUCKET_NAME_EXAMPLE>"
+  APPENGINE_URL: "<APPENGINE_URL_EXAMPLE>"
+  FRONTEND_URL: "<FRONTEND_URL_EXAMPLE>"
+app_engine_apis: true
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 3
+  target_cpu_utilization: 0.75
+
+handlers:
+- url: /static
+  static_dir: static/
+- url: /.*
+  script: auto
