@@ -61,7 +61,16 @@ ADDI_PAYMENT_API = env("ADDI_PAYMENT_API")
 # SECURITY WARNING: don't run with debug turned on in production!
 ENV = env("ENV", default="DEVELOPMENT")
 DEBUG = ENV != "PRODUCTION"
-# ALLOWED_HOSTS = []
+
+# Outgoing email via SMTP, same provider/config as Datak core (Resend SMTP).
+EMAIL_BACKEND = env("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.resend.com")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="resend")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=15)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="noreply@datak.co")
 
 # Application definition
 

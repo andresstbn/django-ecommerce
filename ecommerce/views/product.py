@@ -9,7 +9,7 @@ from django.core.files import File
 class ProductAvailableView(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ProductAvailableSerializer
-    queryset = Product.objects.filter(published=True)
+    queryset = Product.objects.filter(published=True).with_catalog_data()
     filterset_fields = ['commerce']
     
 class UpdateCategoriesSerializer(serializers.Serializer):
@@ -26,7 +26,7 @@ class UpdateImagesSerializer(serializers.Serializer):
 class ProductViewSet(CommerceRelatedViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ProductSerializer
-    queryset = Product.objects.all()
+    queryset = Product.objects.with_catalog_data()
     
     @swagger_auto_schema(request_body=UploadImageSerializer)
     @decorators.parser_classes([parsers.FormParser, parsers.MultiPartParser])

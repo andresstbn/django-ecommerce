@@ -51,8 +51,7 @@ Variables de entorno asociadas:
 El proyecto esta pensado para App Engine:
 
 - Existe `app.yaml` para despliegue en App Engine Standard.
-- `main.py` usa `google.appengine.api.wrap_wsgi_app`.
-- Dependencia `appengine-python-standard` incluida.
+- `main.py` expone la app WSGI de Django (sin APIs propietarias de App Engine; el correo va por SMTP).
 
 Aun asi, se puede adaptar facilmente a otros entornos (por ejemplo Cloud Run, VM o contenedores) usando la app WSGI/ASGI de Django y ajustando configuracion de entorno.
 
@@ -82,6 +81,22 @@ Usa archivos de ejemplo como referencia y coloca valores reales solo en secretos
 - `ADDI_PAYMENT_API`
 - `ADDI_WEBHOOK_USERNAME`
 - `ADDI_WEBHOOK_PASSWORD`
+- `EMAIL_HOST_PASSWORD` (API key SMTP de Resend; `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `DEFAULT_FROM_EMAIL` tienen defaults)
+
+## Imagenes de producto
+
+Al guardar una `ProductImage` se generan dos variantes WebP junto al original (que nunca se modifica):
+
+- `<original>_thumb.webp` (600px, campo `thumbnail`): tarjetas de catalogo y carrito.
+- `<original>_medium.webp` (1600px, campo `medium` en la API): detalle de producto y zoom.
+
+Si la generacion falla, la subida no se pierde: se registra el error y el frontend usa el original.
+Para regenerar imagenes existentes (idempotente, se puede re-ejecutar):
+
+```bash
+python manage.py generate_thumbnails --dry-run
+python manage.py generate_thumbnails
+```
 
 ## Desarrollo local rapido
 
@@ -96,6 +111,12 @@ Comandos sugeridos:
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
+```
+
+Pruebas (requieren PostgreSQL por `ArrayField`):
+
+```bash
+python manage.py test ecommerce
 ```
 
 ## API docs
