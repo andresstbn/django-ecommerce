@@ -16,7 +16,7 @@ env_variables:
   FRONTEND_URL: "<FRONTEND_URL_EXAMPLE>"
   # Outgoing email (SMTP, same Resend account/sender as Datak core). Host/user/port default to Resend.
   EMAIL_HOST_PASSWORD: "<RESEND_SMTP_API_KEY>"
-  DEFAULT_FROM_EMAIL: "noreply@datak.co"
+  DEFAULT_FROM_EMAIL: "no-reply@mail.datak.co"
 
 automatic_scaling:
   min_instances: 0
