@@ -1,5 +1,5 @@
 from django.db import models
-from ecommerce.models.product_attribute import AttributeValue, AttributeOption
+from ecommerce.models.product_attribute import AttributeOption
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 def get_default_extra_amounts():
@@ -50,7 +50,20 @@ def get_default_taxes():
     }
 
 
+class ProductQuerySet(models.QuerySet):
+    def with_catalog_data(self):
+        return self.prefetch_related(
+            "images",
+            "categories",
+            models.Prefetch(
+                "attributevalue_set__attribute_options",
+                queryset=AttributeOption.objects.select_related("attribute"),
+            ),
+        )
+
+
 class Product(models.Model):
+    objects = ProductQuerySet.as_manager()
     ARTICLE_TYPE_CHOICES = [("I", "Inventario"), ("S", "Servicio")]
     commerce = models.ForeignKey("Commerce", on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -83,29 +96,22 @@ class Product(models.Model):
     layout_settings = models.JSONField(default=dict, blank=True)
     discount_percentage = models.DecimalField(decimal_places=2, max_digits=5, default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     
-    def get_attribute_values(self):
-        return AttributeValue.objects.filter(product=self)
-
     def get_stock(self):
-        return sum(
-            [value.stock for value in AttributeValue.objects.filter(product=self)]
-        )
+        return sum(value.stock for value in self.attributevalue_set.all())
 
     def get_attribute_values(self):
+        """{attribute: {option: stock}}. Uses prefetched rows (see Product.objects.with_catalog_data)."""
+        options = {}
+        stock_by_option = {}
+        for value in self.attributevalue_set.all():  # ordered by -id: first match wins, as before
+            for option in value.attribute_options.all():
+                options[option.id] = option
+                stock_by_option.setdefault(option.id, value.stock)
+
         return_dict = {}
-        tree_dict = {}
-        attribute_options = AttributeOption.objects.filter(values__product=self).distinct()
-        
-        for option in attribute_options:
-            attribute_name = option.attribute.name
-            if attribute_name not in return_dict:
-                return_dict[attribute_name] = {}
-     
-            return_dict[attribute_name][option.name] = option.values.filter(
-                product=self
-            )[0].stock
-
-
+        for option_id in sorted(options, reverse=True):  # AttributeOption ordering is -id
+            option = options[option_id]
+            return_dict.setdefault(option.attribute.name, {})[option.name] = stock_by_option[option_id]
         return return_dict
 
     def __str__(self):

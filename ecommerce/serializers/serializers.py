@@ -74,9 +74,11 @@ class OrderForPaymentSerializer(OrderSerializer):
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
+    medium = serializers.ReadOnlyField(source="medium_url")
+
     class Meta:
         model = ProductImage
-        fields = ("image", "thumbnail", "id")
+        fields = ("image", "thumbnail", "medium", "id")
 
 
 class ProductAvailableSerializer(serializers.ModelSerializer):

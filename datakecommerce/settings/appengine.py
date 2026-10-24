@@ -4,11 +4,9 @@ env = environ.Env()
 environ.Env.read_env()
 
 
-ALLOWED_HOSTS = []
 APPENGINE_URL = env("APPENGINE_URL", default=None)
-
-if APPENGINE_URL:
-    ALLOWED_HOSTS = [APPENGINE_URL]
+# Comma separated; lets the same build serve App Engine and Cloud Run hosts.
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[APPENGINE_URL] if APPENGINE_URL else [])
 
 FRONTEND_URL = env("FRONTEND_URL", default=None)
 

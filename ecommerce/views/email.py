@@ -1,31 +1,6 @@
 from rest_framework import permissions, views, serializers, response, status
-from google.appengine.api import mail
 from drf_yasg.utils import swagger_auto_schema
-SENDER_EMAIL = "noreply@datak.co"
-
-def send_email(subject, recipient_list, body, cc=None, bcc=None):
-    try:
-        kwargs = {
-            "sender": SENDER_EMAIL,
-            "to": recipient_list,
-            "subject": subject,
-            "html": body,
-        }
-
-        if cc:
-            kwargs["cc"] = cc
-        if bcc:
-            kwargs["bcc"] = bcc
-
-        message = mail.EmailMessage(**kwargs)
-        message.check_initialized()
-        message.send()
-        return True
-
-    except Exception as e:
-        print(e)
-        print("Mocking email sending")
-        return False
+from utils.mails.base import send_email
 
 
 class SendEmailSerializer(serializers.Serializer):
@@ -37,7 +12,7 @@ class SendEmailSerializer(serializers.Serializer):
 
 
 class SendEmailView(views.APIView):
-    # permission_classes = (permissions.IsAuthenticated,) // TODO: Uncomment this line
+    permission_classes = (permissions.IsAuthenticated,)
     @swagger_auto_schema(request_body=SendEmailSerializer)
     def post(self, request, *args, **kwargs):
         serializer = SendEmailSerializer(data=request.data)

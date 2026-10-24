@@ -1,4 +1,3 @@
-from google.appengine.api import mail
 from django.template.loader import get_template
 from .base import send_email
 

@@ -14,7 +14,9 @@ env_variables:
   GS_BUCKET_NAME: "<GCS_BUCKET_NAME_EXAMPLE>"
   APPENGINE_URL: "<APPENGINE_URL_EXAMPLE>"
   FRONTEND_URL: "<FRONTEND_URL_EXAMPLE>"
-app_engine_apis: true
+  # Outgoing email (SMTP, same Resend account/sender as Datak core). Host/user/port default to Resend.
+  EMAIL_HOST_PASSWORD: "<RESEND_SMTP_API_KEY>"
+  DEFAULT_FROM_EMAIL: "no-reply@mail.datak.co"
 
 automatic_scaling:
   min_instances: 0

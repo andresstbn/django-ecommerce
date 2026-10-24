@@ -8,7 +8,6 @@ class CommerceRelatedViewSet(ModelViewSet):
     
     def get_commerce_id(self):
         if self.request.headers.get("X-Commerce-Id", None):
-            print("X-Commerce-Id", self.request.headers.get("X-Commerce-Id"))
             return self.request.headers.get("X-Commerce-Id")
         if self.request.query_params.get("commerce", None):
             return self.request.query_params.get("commerce")

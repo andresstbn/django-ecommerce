@@ -251,7 +251,7 @@ class OrderAddiPaymentAPIView(views.APIView):
     def addi_auth_api(request, client_data):
         url = settings.ADDI_AUTH_API
         payload = client_data
-        response = requests.post(url, json=payload)
+        response = requests.post(url, json=payload, timeout=30)
         data = response.json()
         return data
     
@@ -263,7 +263,7 @@ class OrderAddiPaymentAPIView(views.APIView):
             "Content-Type": "application/json",
         }
         payload = payment_data
-        response = requests.post(url, json=payload, headers=headers)
+        response = requests.post(url, json=payload, headers=headers, timeout=30)
         
         data = response.url
         
